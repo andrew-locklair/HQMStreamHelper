@@ -1,0 +1,36 @@
+{
+    "names": {
+        "Chicago": "CHI", 
+        "Carolina": "CAR", 
+        "Los Angeles": "LAK", 
+        "Vegas": "VGK", 
+        "Calgary": "CGY", 
+        "New York": "NYR",
+        "Toledo": "TOL",
+        "London": "LDN",
+        "Hartford": "HFD",
+        "Kamloops": "KAM",
+        "Amherst": "UMA",
+        "Minnesota": "MINN",
+        "Providence": "PRO",
+        "Sarnia": "SAR",
+        "Alaska": "ALK",
+        "Macon": "MAC"
+    },
+    "cells": {
+        "jsl": ["Q4:Q7", "S4:S7", "T4:T7"],
+        "rsl": ["Q4:Q9", "S4:S9", "T4:T9"],
+        "lhl": ["P6:P11", "R6:R11", "S6:S11"]
+    },
+    "paths": {
+        "left_logo_path": "C:/Users/Andrew/Documents/hockey055f/Stream/New Team Logos Left/",
+        "right_logo_path": "C:/Users/Andrew/Documents/hockey055f/Stream/New Team Logos Right/",
+        "sch_path": "C:/Users/Andrew/Documents/hockey055f/Stream/",
+        "json_path": "C:/Users/Andrew/AppData/Roaming/obs-studio/basic/scenes/"
+    },
+    "sheets": {
+        "jsl": "1hwOCsdhdtvTfG87VG97CrY3-uNvRqVYhfbIcWq0EnNk",
+        "rsl": "13S9AUzeYFrZvnd3cGujwkPlO5XrRic-vp03MW_njIV4",
+        "lhl": "19eVof0YuNIPEESL0qRuJE7G8x7wGUVv--1AUNeEEPrk"
+    }
+}
