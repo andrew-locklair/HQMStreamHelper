@@ -17,10 +17,24 @@
         "Alaska": "ALK",
         "Macon": "MAC"
     },
+    "full_names": {
+        "Chicago": "Chicago Blackhawks", 
+        "Carolina": "Carolina Hurricanes", 
+        "Los Angeles": "Los Angeles Kings", 
+        "Vegas": "Vegas Golden Knights", 
+        "Calgary": "Calgary Flames", 
+        "New York": "New York Rangers"
+    },
     "cells": {
         "jsl": ["Q4:Q7", "S4:S7", "T4:T7"],
         "rsl": ["Q4:Q9", "S4:S9", "T4:T9"],
-        "lhl": ["P6:P11", "R6:R11", "S6:S11"]
+        "lhl": ["P6:P11", "R6:R11", "S6:S11"],
+        "Calgary": "A11:A21",
+        "Carolina": "X11:X21",
+        "Chicago": "AU11:AU21",
+        "Los Angeles": "A33:A43",
+        "New York": "X33:X43",
+        "Vegas": "AU33:AU43"
     },
     "paths": {
         "left_logo_path": "C:/Users/Andrew/Documents/hockey055f/Stream/New Team Logos Left/",
@@ -31,6 +45,7 @@
     "sheets": {
         "jsl": "1hwOCsdhdtvTfG87VG97CrY3-uNvRqVYhfbIcWq0EnNk",
         "rsl": "13S9AUzeYFrZvnd3cGujwkPlO5XrRic-vp03MW_njIV4",
-        "lhl": "19eVof0YuNIPEESL0qRuJE7G8x7wGUVv--1AUNeEEPrk"
+        "lhl": "19eVof0YuNIPEESL0qRuJE7G8x7wGUVv--1AUNeEEPrk",
+        "lhl_stats": "1EeXo-eB4stUowcC-d67sWWOC3x7LgDdrPbv6ovD1atE"
     }
 }

@@ -1,12 +1,14 @@
 from re import search
 import datetime
 import json
+import jsonpickle
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 with open('data.json') as stored_data:
     _data = json.load(stored_data)
     short_namer = _data['names']
+    long_namer = _data['full_names']
     cells = _data['cells']
     paths = _data['paths']
     sheets = _data['sheets']
@@ -14,19 +16,16 @@ with open('data.json') as stored_data:
 class Team(object):
     def __init__(self, name, record="", points=""):
         """A class that holds information regarding each team's name, statistics, and players."""
-        global short_namer
+        global short_namer, long_namer
         record_list = list(map(int, search(r'(\d+)-(\d+)-(\d+)-(\d+)', record).groups()))
         calc_points_list = [a * b for a, b in zip([3, 2, 1, 0], record_list)]
-        if sum(calc_points_list) != int(points):
+        if sum(calc_points_list) != points:
             raise TeamException("Points are not equal to record, check schedule data.")
         self.name = short_namer[name]
+        self.full_name = long_namer.get(name, None)
         self.record = record
         self.points = points
         self.wins, self.overtime_wins, self.overtime_losses, self.losses = record_list
-        # TODO get players from iterating over the statistics / roster sheets
-        # create Player class to hold name, position, role, etc
-        # this can be displayed at the beginning of games after keying in which players are starting
-        # or potentially grabbed from the client by pressing a key and running a script (memoryeditor)
         self.players = []
 
     def __str__(self):
@@ -34,6 +33,31 @@ class Team(object):
 
     def __repr__(self):
         return str(self)
+
+class Player(object):
+    def __init__(self, name, **kwargs):
+        """A class that holds information regarding player statistics."""
+        self.name = name
+        self.position = kwargs.get('position', None)
+        self.role = kwargs.get('role', None)
+        self.points = kwargs.get('points', None)
+        self.goals = kwargs.get('goals', None)
+        self.assists = kwargs.get('assists', None)
+        self.ppg = kwargs.get('ppg', None)
+        self.plusminus = kwargs.get('plusminus', None)
+        self.gwg = kwargs.get('gwg', None)
+        self.goalpercent = kwargs.get('goalpercent', None)
+        self.shots = kwargs.get('shots', None)
+        self.saves = kwargs.get('saves', None)
+        self.savepercent = kwargs.get('savepercent', None)
+        self.spg = kwargs.get('spg', None)
+        self.ga = kwargs.get('ga', None)
+        self.gaa = kwargs.get('gaa', None)
+        self.gp = kwargs.get('gp', None)
+        self.gp_goalie = kwargs.get('gp_goalie', None)
+        self.wins = kwargs.get('wins', None)
+        self.shutouts = kwargs.get('shutouts', None)
+        self.toi = kwargs.get('toi', None)
 
 class TeamException(Exception):
     pass
@@ -49,13 +73,44 @@ def grab_worksheet(keys=None):
     elif isinstance(keys, str):
         return gc.open_by_key(keys)
 
-def get_teams(wks, league):
+def get_teams(wks, league, wks_stats=None):
     global cells
     wks = wks.get_worksheet(0)
+    if wks_stats is not None:
+        wks_stats = wks_stats.get_worksheet(0)
     teams = []
 
     for team, record, point in zip(wks.range(cells[league][0]), wks.range(cells[league][1]), wks.range(cells[league][2])):
-        teams.append(Team(team.value, record.value, point.value))
+        out_team = Team(team.value, record.value, int(point.value))
+        if wks_stats is not None:
+            player_list = []
+            for player in wks_stats.range(cells[team.value]):
+                row = wks_stats.row_values(player.row)
+                usr_player = Player(player.value, position=row[player.col + 1],
+                                    role=row[player.col + 2],
+                                    points=row[player.col + 3],
+                                    goals=row[player.col + 4],
+                                    assists=row[player.col + 5],
+                                    ppg=row[player.col + 6],
+                                    plusminus=row[player.col + 7],
+                                    gwg=row[player.col + 8],
+                                    goalpercent=row[player.col + 9],
+                                    shots=row[player.col + 10],
+                                    saves=row[player.col + 11],
+                                    savepercent=row[player.col + 12],
+                                    spg=row[player.col + 13],
+                                    ga=row[player.col + 14],
+                                    gaa=row[player.col + 15],
+                                    gp=row[player.col + 16],
+                                    gp_goalie=row[player.col + 17],
+                                    wins=row[player.col + 18],
+                                    shutouts=row[player.col + 19],
+                                    toi=row[player.col + 20])
+                player_list.append(usr_player)
+            out_team.players = player_list
+        teams.append(out_team)
+    with open('stats_{d.month}{d.day}{d.year}-{league}.json'.format(d=datetime.date.today(), league=league), 'w') as outfile:
+        outfile.write(jsonpickle.encode(teams))
     return teams
 
 def grab_games(row, col, cell, wks):
@@ -99,7 +154,7 @@ def modify_json_standings(lst_teams, league):
     with open(sch_path + "{}_Stand.txt".format(league.upper()), "w+") as standings:
         standings.write("\n".join([i.record for i in lst_teams]) + "\n")
     with open(sch_path + "{}_Pts.txt".format(league.upper()), "w+") as standings:
-        standings.write("\n".join([i.points for i in lst_teams]) + "\n")
+        standings.write("\n".join([str(i.points) for i in lst_teams]) + "\n")
     with open(json_path + "HQM_{}.json".format(league.upper()), "r+") as json_file:
         data = json.load(json_file)
         for i, team in enumerate(lst_teams):
@@ -138,10 +193,10 @@ def modify_json_schedule(lst_sched, league):
 
 def main():
     global sheets
-    (jsl, rsl, lhl) = grab_worksheet([sheets['jsl'], sheets['rsl'], sheets['lhl']])
+    (jsl, rsl, lhl, lhl_stats) = grab_worksheet([sheets['jsl'], sheets['rsl'], sheets['lhl'], sheets['lhl_stats']])
     modify_json_standings(get_teams(jsl, "jsl"), "jsl")
     modify_json_standings(get_teams(rsl, "rsl"), "rsl")
-    modify_json_standings(get_teams(lhl, "lhl"), "lhl")
+    modify_json_standings(get_teams(lhl, "lhl", lhl_stats), "lhl")
     try:
         response = input("Which league (JSL, RSL, LHL)? ").upper()
         if response == "JSL" or response == "RSL":

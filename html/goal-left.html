@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @font-face {
+            font-family: college;
+            src: url('C:/Windows/Fonts/College/College Regular.fnt');
+        }
+        
+        div {
+            width: 0px;
+            height: 51px;
+            background: red;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+            color: white;
+            animation: goal;
+            animation-duration: 7s;
+        }
+        
+        div>span {
+            font-family: college;
+            display: table;
+            margin: 0 auto;
+            text-shadow: 1px 1px black;
+            font-size: 2.5em;
+            animation: spacing;
+            animation-duration: 7s;
+        }
+        
+        @keyframes spacing {
+            from {
+                letter-spacing: 0.5px;
+                padding-left: 0px;
+            }
+            to {
+                letter-spacing: 12px;
+                padding-left: 10px;
+            }
+        }
+
+        @keyframes goal {
+            0%,
+            100% {
+                width: 0px;
+            }
+            5%,
+            95% {
+                width: 182px;
+                border: 2px black solid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div><span>GOAL!</span></div>
+</body>
+
+</html>
